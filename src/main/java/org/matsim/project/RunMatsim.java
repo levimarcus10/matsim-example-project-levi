@@ -22,6 +22,7 @@ import org.matsim.api.core.v01.Scenario;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
+import org.matsim.core.controler.OutputDirectoryHierarchy;
 import org.matsim.core.scenario.ScenarioUtils;
 
 /**
@@ -32,26 +33,36 @@ public class RunMatsim{
 
 	public static void main(String[] args) {
 
-		Config config = ConfigUtils.loadConfig( args ) ;
-		
-		// possibly modify config here
-		
-		// ---
-		
-		Scenario scenario = ScenarioUtils.loadScenario(config) ;
-		
-		// possibly modify scenario here
-		
-		// ---
-		
-		Controler controler = new Controler( scenario ) ;
-		
-		// possibly modify controler here
+		// construct and modify config object:
+		// config.xxx().setYyy();
 
-//		controler.addOverridingModule( new OTFVisLiveModule() ) ;
-		
-		// ---
-		
+		// Checks if no args
+		Config config;
+		if( args==null || args.length==0 || args[0]==null ){
+			config = ConfigUtils.loadConfig( "scenarios/equil/config.xml" ) ;
+		} else {
+			 config = ConfigUtils.loadConfig( args ) ;
+		}
+		// Deletes existing output directory
+		config.controler().setOverwriteFileSetting(
+				OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists );
+
+
+		// load and adapt scenario object:
+		// scenario.getXxx().doYyy();
+
+		Scenario scenario = ScenarioUtils.loadScenario( config ) ;
+
+
+		// load and adapt controler object:
+		// controler.doZzz();
+
+		Controler controler = new Controler( scenario ) ;
+
+		// Opens otfvis, an interactive visualizer
+		// controler.addOverridingModule( new OTFVisLiveModule() ) ;
+
+
 		controler.run();
 	}
 	
